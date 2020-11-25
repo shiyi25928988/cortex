@@ -3,6 +3,7 @@ package org.cortex.module;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.name.Named;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
@@ -11,6 +12,10 @@ import io.vertx.ext.web.Router;
 import io.vertx.servicediscovery.ServiceDiscovery;
 import io.vertx.servicediscovery.ServiceDiscoveryOptions;
 
+/**
+ * @author shiyi
+ *
+ */
 public class VertxModule extends AbstractModule {
 
 	public VertxModule() {
@@ -21,10 +26,11 @@ public class VertxModule extends AbstractModule {
 		bind(Vertx.class).toProvider(VertxProvider.class);
 		bind(HttpServer.class).toProvider(HttpServerProvider.class);
 		bind(Router.class).toProvider(RouterProvider.class);
+		bind(ServiceDiscoveryOptions.class).toProvider(ServiceDiscoveryOptionsProvider.class);
 		bind(ServiceDiscovery.class).toProvider(ServiceDiscoveryProvider.class);
 	}
 
-	private static class VertxProvider implements Provider<Vertx> {
+	public static class VertxProvider implements Provider<Vertx> {
 
 		@Override
 		public Vertx get() {
@@ -33,7 +39,7 @@ public class VertxModule extends AbstractModule {
 
 	}
 
-	private static class HttpServerProvider implements Provider<HttpServer> {
+	public static class HttpServerProvider implements Provider<HttpServer> {
 		
 		@Inject
 		Vertx vertx;
@@ -44,7 +50,7 @@ public class VertxModule extends AbstractModule {
 		}
 	}
 	
-	private static class RouterProvider implements Provider<Router> {
+	public static class RouterProvider implements Provider<Router> {
 		
 		@Inject
 		Vertx vertx;
@@ -55,17 +61,34 @@ public class VertxModule extends AbstractModule {
 		}
 	}
 	
-	private static class ServiceDiscoveryProvider implements Provider<ServiceDiscovery> {
+	public static class ServiceDiscoveryOptionsProvider implements Provider<ServiceDiscoveryOptions> {
+		
+		@Named("eventbus.address")
+		String eventbusAddr;
+		
+		@Named("service.name")
+		String serviceName;
+		
+		@Override
+		public ServiceDiscoveryOptions get() {
+			return new ServiceDiscoveryOptions()
+                    .setAnnounceAddress(eventbusAddr)
+                    .setName("serviceName");
+		}
+		
+	}
+	
+	public static class ServiceDiscoveryProvider implements Provider<ServiceDiscovery> {
 
 		@Inject
 		Vertx vertx;
 		
+		@Inject
+		ServiceDiscoveryOptions serviceDiscoveryOptions;
+		
 		@Override
 		public ServiceDiscovery get() {
-		    return ServiceDiscovery.create(vertx,
-                    new ServiceDiscoveryOptions()
-                      .setAnnounceAddress("service-announce")
-                      .setName("my-name"));
+		    return ServiceDiscovery.create(vertx,serviceDiscoveryOptions);
 		}
 		
 	}

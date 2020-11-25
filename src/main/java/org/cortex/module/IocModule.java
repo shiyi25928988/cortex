@@ -38,7 +38,7 @@ public class IocModule extends AbstractModule {
 	protected void configure() {
 		//bind(RestApiService.class).toProvider(RestServiceProvider.class);
 		
-		Names.bindProperties(binder(), System.getProperties());
+		
 
 		
 	}

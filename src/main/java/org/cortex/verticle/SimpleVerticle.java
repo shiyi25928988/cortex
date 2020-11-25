@@ -1,4 +1,7 @@
-package org.cortex;
+package org.cortex.verticle;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.MultiMap;
@@ -12,6 +15,11 @@ import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 
 public class SimpleVerticle extends AbstractVerticle {
+	
+	@Inject
+	@Named("application.port")
+	public int port;
+	
 	@Override
 	public void start() throws Exception {
 		// Create a Router
@@ -25,7 +33,6 @@ public class SimpleVerticle extends AbstractVerticle {
 		Route route_a = router.route();
 		
 		route_a.handler(requestHandler ->{
-			
 			System.out.println(requestHandler.getClass().getCanonicalName());
 			
 			System.out.println(requestHandler.normalizedPath());
@@ -36,8 +43,8 @@ public class SimpleVerticle extends AbstractVerticle {
 			requestHandler.end("a");
 		});
 
-		
-		httpServer.requestHandler(router).listen(8080);
+		System.out.println(port);
+		httpServer.requestHandler(router).listen(port);
 
 //		// Mount the handler for all incoming requests at every path and HTTP method
 //		router.route().handler(requestHandler ->{

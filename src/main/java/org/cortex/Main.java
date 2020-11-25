@@ -1,9 +1,24 @@
 package org.cortex;
 
+import org.cortex.config.CoreProperties;
+import org.cortex.module.CommonModule;
+import org.cortex.verticle.SimpleVerticle;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 public class Main {
 
 	public static void main(String...strings) throws Exception {
-		SimpleVerticle simpleVerticle = new SimpleVerticle();
+		
+		CoreProperties.setProperties("application.properties");
+		
+		System.out.println(System.getProperty("application.port"));
+		
+		Injector injector = Guice.createInjector(new CommonModule());
+		
+		SimpleVerticle simpleVerticle = injector.getInstance(SimpleVerticle.class);
+
 		
 		
 		simpleVerticle.start();
