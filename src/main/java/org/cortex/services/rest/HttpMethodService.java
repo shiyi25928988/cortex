@@ -1,8 +1,6 @@
 package org.cortex.services.rest;
 
-import com.google.inject.ImplementedBy;
 
-@ImplementedBy(HttpMethodServiceImpl.class)
 public interface HttpMethodService {
 	/**
 	 * HTTP GET
@@ -38,4 +36,9 @@ public interface HttpMethodService {
 	 * HTTP TRACE
 	 */
 	void doTrace();
+	
+	/**
+	 * HTTP TRACE
+	 */
+	void doPatch();
 }

@@ -11,7 +11,7 @@ public enum HttpMethod {
 	HEAD,
 	OPTIONS;
 	
-	public HttpMethod getHttpMethod(String method) {
+	public static HttpMethod getHttpMethod(String method) {
 		if(Strings.isNullOrEmpty(method)) {
 			return GET;
 		}

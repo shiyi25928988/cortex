@@ -1,5 +1,7 @@
 package org.cortex.services.rest;
 
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 
 public class RestHelper {
@@ -12,5 +14,13 @@ public class RestHelper {
 	
 	public static RoutingContext getContext() {
 		return local.get();
+	}
+	
+	public static HttpServerRequest getRequest() {
+		return local.get().request();
+	}
+	
+	public static HttpServerResponse getResponse() {
+		return local.get().request().response();
 	}
 }

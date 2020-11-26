@@ -1,5 +1,7 @@
 package org.cortex.verticle;
 
+import org.cortex.services.HttpRequestDispatcherService;
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -18,7 +20,10 @@ public class SimpleVerticle extends AbstractVerticle {
 	
 	@Inject
 	@Named("application.port")
-	public int port;
+	private int port;
+	
+	@Inject
+	private HttpRequestDispatcherService httpRequestDispatcherService;
 	
 	@Override
 	public void start() throws Exception {
@@ -40,7 +45,11 @@ public class SimpleVerticle extends AbstractVerticle {
 			System.out.println(requestHandler.request().method().name());
 			System.out.println(requestHandler.request().getParam("name"));
 			
-			requestHandler.end("a");
+			requestHandler.request().body().onComplete(handler->{
+				System.out.println(handler.result());
+			});
+			httpRequestDispatcherService.dispatch(requestHandler);
+			//requestHandler.end("a");
 		});
 
 		System.out.println(port);

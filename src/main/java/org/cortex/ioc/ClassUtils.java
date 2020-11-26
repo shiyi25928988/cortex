@@ -11,6 +11,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import lombok.NonNull;
@@ -22,19 +24,20 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public final class ClassUtils {
-	
+
 	public static Set<Class<?>> getClassSet() throws IOException, ClassNotFoundException {
 		return getClassSet(ClassUtils.class.getName().substring(0, ClassUtils.class.getName().indexOf(".")));
 	}
 
 	/**
 	 * Return a classes set by the given package name.
+	 * 
 	 * @param packageName
 	 * @return
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	public static Set<Class<?>> getClassSet(final String packageName) throws IOException, ClassNotFoundException {
+	public static Set<Class<?>> getClassSet(final String packageName) throws IOException {
 
 		Set<Class<?>> classSet = new HashSet<>();
 
@@ -42,35 +45,43 @@ public final class ClassUtils {
 
 		while (URLs.hasMoreElements()) {
 			URL url = URLs.nextElement();
+			log.info(url.toString());
 			if (Objects.nonNull(url)) {
-				
+
 				switch (url.getProtocol()) {
-				
-					case "file":
-						String packagePath = escapeSpace(url.getPath());
-						addClass(classSet, packagePath, packageName);
-						break;
-						
-					case "jar":
-						JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
-						if (Objects.nonNull(jarURLConnection)) {
-							JarFile jarFile = jarURLConnection.getJarFile();
-							if (Objects.nonNull(jarFile)) {
-								Enumeration<JarEntry> jarEntries = jarFile.entries();
-								while (jarEntries.hasMoreElements()) {
-									JarEntry jarEntry = jarEntries.nextElement();
-									String jarEntryName = jarEntry.getName();
-									if (jarEntryName.endsWith(".class")) {
-										String className = jarEntryName.substring(0, jarEntryName.lastIndexOf("."))
-										                .replaceAll("/", ".");
+
+				case "file":
+					String packagePath = escapeSpace(url.getPath());
+					addClass(classSet, packagePath, packageName);
+					break;
+
+				case "jar":
+					JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
+					if (Objects.nonNull(jarURLConnection)) {
+						JarFile jarFile = jarURLConnection.getJarFile();
+						if (Objects.nonNull(jarFile)) {
+							Enumeration<JarEntry> jarEntries = jarFile.entries();
+							while (jarEntries.hasMoreElements()) {
+								JarEntry jarEntry = jarEntries.nextElement();
+								String jarEntryName = jarEntry.getName();
+								if (jarEntryName.endsWith(".class")) {
+
+									String className = jarEntryName.substring(0, jarEntryName.lastIndexOf("."))
+											.replaceAll("/", ".");
+									log.info(className);
+									try {
 										doAddClass(classSet, className);
+									} catch (ClassNotFoundException | NoClassDefFoundError e) {
+										log.error(e.getLocalizedMessage());
+										continue;
 									}
 								}
 							}
 						}
-						break;
-						default:
-							log.error(url.getProtocol() + "file process not supported!!");
+					}
+					break;
+				default:
+					log.error(url.getProtocol() + "file process not supported!!");
 				}
 			}
 		}
@@ -82,10 +93,9 @@ public final class ClassUtils {
 	 * @param packagePath
 	 * @param packageName
 	 */
-	private static void addClass(final Set<Class<?>> classSet, 
-								@NonNull final String packagePath,
-								@NonNull final String packageName) {
-		
+	private static void addClass(final Set<Class<?>> classSet, @NonNull final String packagePath,
+			@NonNull final String packageName) {
+
 		File[] files = new File(packagePath).listFiles(new FileFilter() {
 			@Override
 			public boolean accept(final File file) {
@@ -120,9 +130,10 @@ public final class ClassUtils {
 			}
 		});
 	}
-	
+
 	/**
 	 * Get the current class loader.
+	 * 
 	 * @return ClassLoader
 	 */
 	private static ClassLoader getClassLoader() {
@@ -136,7 +147,7 @@ public final class ClassUtils {
 	 * @throws ClassNotFoundException
 	 */
 	private static Class<?> loadClass(final String className, final boolean initialize) throws ClassNotFoundException {
-		//log.info(className);
+		// log.info(className);
 		return Class.forName(className, initialize, getClassLoader());
 	}
 
@@ -150,15 +161,24 @@ public final class ClassUtils {
 		classSet.add(clazz);
 	}
 
-	
 	/**
 	 * %20 is a space in URL
-	 * @param url string 
+	 * 
+	 * @param url string
 	 * @return
 	 */
 	private static String escapeSpace(final String str) {
 		String newStr = str.replace("%20", " ");
 		newStr = newStr.replace("%5c", File.separator);
 		return newStr;
+	}
+	private static String escapeDollarEnd(final String str) {
+		Pattern pattern = Pattern.compile("\\$[0-9][0-9]?[0-9]?$");
+		Matcher matcher = pattern.matcher(str);
+		if(matcher.find()) {
+			return matcher.replaceAll("");
+		} else {
+			return str;
+		}
 	}
 }
