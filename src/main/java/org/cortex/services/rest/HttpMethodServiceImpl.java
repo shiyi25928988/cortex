@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import org.cortex.annotation.Path;
 import org.cortex.annotation.PathParam;
 import org.cortex.annotation.RequestBody;
+import org.cortex.annotation.ResponseType;
 import org.cortex.annotation.method.DELETE;
 import org.cortex.annotation.method.GET;
 import org.cortex.annotation.method.HEAD;
@@ -241,6 +242,12 @@ public class HttpMethodServiceImpl implements HttpMethodService{
 				});
 				
 				Object invokeResult = ReflectionUtils.invokeMethod(obj, method, args);
+				
+				ResponseType responseType = method.getAnnotation(ResponseType.class);
+				if(!Objects.isNull(responseType)) {
+					RestHelper.getResponse().putHeader("Content-Type", responseType.type().getType());
+				}
+				
 				if(Objects.isNull(invokeResult)) {
 					RestHelper.getResponse().end();
 				}
@@ -249,7 +256,7 @@ public class HttpMethodServiceImpl implements HttpMethodService{
 					RestHelper.getResponse().send((String)invokeResult);
 				}
 				
-				//RestHelper.getResponse().send(JsonObject.mapFrom().encode());
+				RestHelper.getResponse().send(JsonObject.mapFrom(invokeResult).encode());
 				//HttpRespHelper.sendResponseData(ReflectionUtils.invokeMethod(obj, method, args));
 			}
 		}
