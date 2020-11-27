@@ -1,6 +1,7 @@
-package org.cortex.services;
+package org.cortex.services.impl;
 
 import org.cortex.annotation.HttpMethod;
+import org.cortex.services.HttpRequestDispatcherService;
 import org.cortex.services.rest.*;
 
 import com.google.inject.Inject;

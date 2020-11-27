@@ -1,5 +1,7 @@
 package org.cortex.services;
 
+import org.cortex.services.impl.HttpRequestDispatcherServiceImpl;
+
 import com.google.inject.ImplementedBy;
 
 import io.vertx.core.http.HttpServerRequest;

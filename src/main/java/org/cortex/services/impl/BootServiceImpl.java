@@ -1,15 +1,16 @@
-package org.cortex.services;
+package org.cortex.services.impl;
 
+import org.cortex.services.BootService;
+
+import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 public class BootServiceImpl implements BootService{
 	
+	@Inject
 	@Named("application.port")
 	private String port;
 	
-	@Named("application.context")
-	private String context;
-
 	@Override
 	public void startOn() {
 		// TODO Auto-generated method stub

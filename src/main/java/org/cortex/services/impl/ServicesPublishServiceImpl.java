@@ -1,4 +1,6 @@
-package org.cortex.services;
+package org.cortex.services.impl;
+
+import org.cortex.services.ServicesPublishService;
 
 import com.google.inject.Inject;
 

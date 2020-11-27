@@ -30,7 +30,6 @@ import org.cortex.module.CommonModule;
 import com.google.common.base.Strings;
 import com.google.inject.Injector;
 
-import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 
@@ -240,7 +239,17 @@ public class HttpMethodServiceImpl implements HttpMethodService{
 						}
 					}
 				});
-				RestHelper.getResponse().send(JsonObject.mapFrom(ReflectionUtils.invokeMethod(obj, method, args)).encode());
+				
+				Object invokeResult = ReflectionUtils.invokeMethod(obj, method, args);
+				if(Objects.isNull(invokeResult)) {
+					RestHelper.getResponse().end();
+				}
+				
+				if(invokeResult instanceof String) {
+					RestHelper.getResponse().send((String)invokeResult);
+				}
+				
+				//RestHelper.getResponse().send(JsonObject.mapFrom().encode());
 				//HttpRespHelper.sendResponseData(ReflectionUtils.invokeMethod(obj, method, args));
 			}
 		}
