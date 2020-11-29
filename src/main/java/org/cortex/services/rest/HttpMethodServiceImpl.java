@@ -126,7 +126,7 @@ public class HttpMethodServiceImpl implements HttpMethodService{
 	 * @throws SingleRequestBodyRequiredException
 	 * @throws EmptyPathParameterException
 	 */
-	private void setMethodAndClassMap(Class<?> clazz, Method method, Map<String, Method> methodMap) throws ReduplicativeMathodPathException, EmptyPathParameterException, SingleRequestBodyRequiredException{
+	private void setMethodAndClassMap(Class<?> clazz, Method method, Map<String, Method> methodMap) throws  EmptyPathParameterException, SingleRequestBodyRequiredException{
 		if (method.isAnnotationPresent(Path.class)) {
 			Path path = method.getAnnotation(Path.class);
 			if (!Strings.isNullOrEmpty(path.value())) {

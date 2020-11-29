@@ -48,9 +48,7 @@ public final class ClassHelper {
 	 * @throws IOException
 	 */
 	public static Set<Class<?>> getControllers(String scanPackageName) throws ClassNotFoundException, IOException {
-		log.info("scanPackageName : " + scanPackageName);
 		Set<Class<?>> classSet = getAnnotationClass(ClassHelper.getClassSet(scanPackageName), Controller.class);
-		classSet.forEach(clazz -> log.info(clazz.getCanonicalName()));
 		return classSet;
 	}
 
@@ -61,7 +59,6 @@ public final class ClassHelper {
 	 * @throws IOException
 	 */
 	public static Set<Class<?>> getClassSet(String packageName) throws ClassNotFoundException, IOException {
-		log.info("packageName : " + packageName);
 		return Collections.unmodifiableSet(ClassUtils.getClassSet(packageName));
 	}
 

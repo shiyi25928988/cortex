@@ -45,7 +45,6 @@ public final class ClassUtils {
 
 		while (URLs.hasMoreElements()) {
 			URL url = URLs.nextElement();
-			log.info(url.toString());
 			if (Objects.nonNull(url)) {
 
 				switch (url.getProtocol()) {
@@ -68,7 +67,6 @@ public final class ClassUtils {
 
 									String className = jarEntryName.substring(0, jarEntryName.lastIndexOf("."))
 											.replaceAll("/", ".");
-									log.info(className);
 									try {
 										doAddClass(classSet, className);
 									} catch (ClassNotFoundException | NoClassDefFoundError e) {
@@ -147,7 +145,6 @@ public final class ClassUtils {
 	 * @throws ClassNotFoundException
 	 */
 	private static Class<?> loadClass(final String className, final boolean initialize) throws ClassNotFoundException {
-		// log.info(className);
 		return Class.forName(className, initialize, getClassLoader());
 	}
 

@@ -1,10 +1,13 @@
 package org.cortex.exception;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author shiyi
  *
  */
-public class ReduplicativeMathodPathException extends Exception {
+@Slf4j
+public class ReduplicativeMathodPathException extends RuntimeException {
 
 	/**
 	 * 
@@ -17,5 +20,11 @@ public class ReduplicativeMathodPathException extends Exception {
 
 	public ReduplicativeMathodPathException(String message) {
 		super(message);
+//		log.error(message);
+//		for(StackTraceElement stackTraceElement : Thread.currentThread().getStackTrace()) {
+//			System.out.println(stackTraceElement.toString());
+//		}
+//		
+//		System.exit(1);
 	}
 }

@@ -3,6 +3,10 @@ package org.cortex.config;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+import org.cortex.annotation.PropertiesFile;
 
 import com.google.common.base.Strings;
 
@@ -15,6 +19,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CoreProperties {
 	
+	
+	public static void setProperties(Class<?> mainClass) {
+		PropertiesFile propertiesFile = mainClass.getAnnotation(PropertiesFile.class);
+		if(!Objects.isNull(propertiesFile)) {
+			String[] fileNames = propertiesFile.files();
+			if(fileNames.length > 0) {
+				Stream.of(fileNames).forEach(file ->{
+					setProperties(file);
+				});
+			}
+		}
+	}
 
 	public static void setProperties(String propertiesFileName) {
 		try {
@@ -65,17 +81,4 @@ public class CoreProperties {
 		
 	}
 	
-	private class DynamicLoader implements Runnable{
-		
-		DynamicLoader(){
-			
-		}
-
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
 }
