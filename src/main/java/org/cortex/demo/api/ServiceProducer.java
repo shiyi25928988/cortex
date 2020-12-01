@@ -12,8 +12,8 @@ import org.cortex.http.ResponseResult;
 public class ServiceProducer {
 
 	@POST
-	@Path("/api")
-	@ResponseType(type = org.cortex.http.MimeType.APPLICATION_JSON)
+	@Path("/api2")
+	@ResponseType(mimeType = org.cortex.http.MimeType.APPLICATION_JSON)
 	@ServiceExpose
 	public ResponseResult<String> api(@RequestBody User user) {
 		return new ResponseResult<String>().setData(user.getName());

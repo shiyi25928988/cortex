@@ -25,6 +25,7 @@ import org.cortex.annotation.method.PUT;
 import org.cortex.exception.EmptyPathParameterException;
 import org.cortex.exception.ReduplicativeMathodPathException;
 import org.cortex.exception.SingleRequestBodyRequiredException;
+import org.cortex.http.handler.ResponseHandlerFactory;
 import org.cortex.ioc.ReflectionUtils;
 import org.cortex.module.CommonModule;
 
@@ -241,23 +242,40 @@ public class HttpMethodServiceImpl implements HttpMethodService{
 					}
 				});
 				
+				/**
+				 * Invoke the method by reflection. 
+				 * */
 				Object invokeResult = ReflectionUtils.invokeMethod(obj, method, args);
 				
-				ResponseType responseType = method.getAnnotation(ResponseType.class);
-				if(!Objects.isNull(responseType)) {
-					RestHelper.getResponse().putHeader("Content-Type", responseType.type().getType());
-				}
+				ResponseHandlerFactory.buildResponseHandler().submit(method, invokeResult);
 				
-				if(Objects.isNull(invokeResult)) {
-					RestHelper.getResponse().end();
-				}
-				
-				if(invokeResult instanceof String) {
-					RestHelper.getResponse().send((String)invokeResult);
-				}
-				
-				RestHelper.getResponse().send(JsonObject.mapFrom(invokeResult).encode());
-				//HttpRespHelper.sendResponseData(ReflectionUtils.invokeMethod(obj, method, args));
+//				ResponseType responseType = method.getAnnotation(ResponseType.class);
+//				if(!Objects.isNull(responseType)) {
+//					RestHelper.getResponse().putHeader("Content-Type", responseType.mimeType().getType());
+//					
+//					if(responseType.isFile()) {
+//						RestHelper.getResponse().sendFile((String)invokeResult, handler -> {
+//							if(handler.succeeded()) {
+//								
+//							}
+//						});
+//						
+//						return;
+//					}
+//				}
+//				
+//				
+//				
+//				if(Objects.isNull(invokeResult)) {
+//					RestHelper.getResponse().end();
+//				}
+//				
+//				if(invokeResult instanceof String) {
+//					RestHelper.getResponse().send((String)invokeResult);
+//				}
+//				
+//				RestHelper.getResponse().send(JsonObject.mapFrom(invokeResult).encode());
+//				//HttpRespHelper.sendResponseData(ReflectionUtils.invokeMethod(obj, method, args));
 			}
 		}
 	}

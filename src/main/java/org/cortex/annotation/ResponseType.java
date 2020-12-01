@@ -11,5 +11,7 @@ import java.lang.annotation.Target;
 @Documented
 public @interface ResponseType {
 
-	org.cortex.http.MimeType type();
+	org.cortex.http.MimeType mimeType();
+	
+	boolean isFile() default false;
 }

@@ -39,10 +39,8 @@ public class SimpleVerticle extends AbstractVerticle {
 				System.out.println(handler.result());
 			});
 			httpRequestDispatcherService.dispatch(requestHandler);
-			//requestHandler.end("a");
 		});
 
-		System.out.println(port);
 		httpServer.requestHandler(router).listen(port);
 
 	}

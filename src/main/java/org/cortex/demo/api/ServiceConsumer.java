@@ -19,7 +19,7 @@ public class ServiceConsumer {
 	
 	@POST
 	@Path("/api")
-	@ResponseType(type = org.cortex.http.MimeType.APPLICATION_JSON)
+	@ResponseType(mimeType = org.cortex.http.MimeType.APPLICATION_JSON)
 	public ResponseResult<String> api(@RequestBody User user) {
 		return serviceProducer.api(user);
 	}
